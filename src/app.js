@@ -12,15 +12,50 @@ app.post("/public/user", async (req, res) => {
 
     const createUser = await user.save();
 
-    res
-      .status(201)
-      .json({
-        status: "success",
-        message: "User created successfully",
-        data: createUser,
-      });
+    res.status(201).json({
+      status: "success",
+      message: "User created successfully",
+      data: createUser,
+    });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message});
+    res.status(400).json({ status: "failed", message: err.message });
+  }
+});
+
+app.get("/users", async (req, res) => {
+  try {
+    const userList = await userModel.find({});
+    res.status(200).json({ status: "success", data: userList });
+  } catch (err) {
+    res.status(500).json({ status: "failed", message: "Something went wrong" });
+  }
+});
+
+app.patch("/user/:id", async (req, res) => {
+  try {
+    const updateUser = await userModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+    res.status(200).json({
+      status: "success",
+      message: "user updated successfully",
+      data: updateUser,
+    });
+  } catch (err) {
+    res.status(500).json({ status: "Failed", message: "something went wrong" });
+  }
+});
+
+app.delete("/user/:id", async (req, res) => {
+  try {
+    const deleteUser = await userModel.findByIdAndDelete(req.params.id);
+    res
+      .status(200)
+      .json({ status: "success", message: "user deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ status: "Failed", message: "Something went wrong" });
   }
 });
 
