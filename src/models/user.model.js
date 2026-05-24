@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 const userSchema = new mongoose.Schema(
   {
@@ -53,5 +55,24 @@ const userSchema = new mongoose.Schema(
     version: true,
   },
 );
+userSchema.methods.isValidUser = async function (password) {
+  const isValidUser = await bcrypt.compare(password, this.password);
+  
+  
+  if (!isValidUser) {
+    throw new Error("Invalid credentials");
+  }
+
+  return true;
+
+};
+
+userSchema.methods.addTokenInCookies = async function (){
+      const token = jwt.sign({ user: this._id }, process.env.JWT_SECRET, {
+        expiresIn: "1D",
+      });
+  
+   return token
+}
 
 module.exports = mongoose.model("User", userSchema);

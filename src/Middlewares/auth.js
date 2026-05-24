@@ -1,14 +1,23 @@
-const IsAuth =(req,res,next)=>{
-    token= "xyzsdsd"
-    const isAuthorized = token === "xyz"
+const jwt = require("jsonwebtoken");
 
-    if(!isAuthorized){
-       res.status(401).send("UnAuthorized User")
-    }else{
-      next()
+const IsAuth = (req, res, next) => {
+  try {
+    const token = req.cookies.token
+
+    if(!token){
+      return res.status(401).json({status:"Failed",message:"Unauthorized user"})
     }
-}
 
-module.exports ={
-    IsAuth
-}
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded
+      next();
+  } catch (err) {
+    return res
+      .status(404)
+      .json({ status: "Failed", message: "Something went wrong" });
+  }
+};
+
+module.exports = {
+  IsAuth,
+};
