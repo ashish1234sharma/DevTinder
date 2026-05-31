@@ -7,6 +7,7 @@ const cors = require("cors");
 const authRoute = require("./routes/authRoute")
 const profileRoute = require("./routes/profileRoute")
 const connectionRoute = require("./routes/connectionRoute")
+const userRoute = require("./routes/userRoute")
 require("dotenv").config();
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(
 app.use("/",authRoute)
 app.use("/",profileRoute)
 app.use("/", connectionRoute)
+app.use("/", userRoute)
 
 
 
